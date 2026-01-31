@@ -1,9 +1,11 @@
-import express, { Request, Response } from "express";
+import express, { Express } from "express";
 
-const app = express();
+import routes from "@/routes";
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, World!");
-});
+const app: Express = express();
+
+app.use(express.json());
+
+app.use("/api", routes);
 
 export default app;

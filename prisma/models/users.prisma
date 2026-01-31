@@ -1,0 +1,35 @@
+model User {
+    id String @id @default(uuid())
+
+    firstName String
+    lastName  String
+
+    email         String?
+    emailVerified Boolean @default(false)
+    phone         String?
+    phoneVerified Boolean @default(false)
+
+    image  String?
+    role   UserRole   @default(CUSTOMER)
+    status UserStatus @default(ACTIVE)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+
+    @@unique([email, phone])
+    @@map("users")
+}
+
+enum UserRole {
+    CUSTOMER
+    ADMIN
+    EXPERT
+    EMPLOYEE
+}
+
+enum UserStatus {
+    ACTIVE
+    BLOCKED
+    BANNED
+    DISABLED
+}
