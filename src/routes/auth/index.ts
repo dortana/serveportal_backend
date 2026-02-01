@@ -1,8 +1,8 @@
-import { getCustomers } from "@/controllers/auth";
+import { signUpHandler } from "@/controllers/auth/signup";
 import { Router } from "express";
 
 const router = Router();
 
-router.get("/", getCustomers);
+router.post("/signup", signUpHandler);
 
 export default router;

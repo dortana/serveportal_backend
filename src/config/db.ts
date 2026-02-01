@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { PrismaClient } from "@/generated/prisma/client";
 import { withAccelerate } from "@prisma/extension-accelerate";
 
