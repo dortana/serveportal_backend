@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "@/config/db";
 import { z } from "zod";
 import { formatZodError } from "@/utils/functions";
+import { createToken, tokenMaxAge } from "@/utils/jwt";
 
 export const signUpSchema = z.object({
   email: z.email({
@@ -49,10 +50,10 @@ export const signUpHandler = async (req: Request, res: Response) => {
     //     lastName: true,
     //   },
     // });
-
+    const token = createToken({ userId: "dummy_user_id", role: "ADMIN" });
     return res.status(201).json({
-      message: "User created",
-      email,
+      message: "User created as ADMIN successfully",
+      token,
     });
   } catch (err) {
     console.error(err);
