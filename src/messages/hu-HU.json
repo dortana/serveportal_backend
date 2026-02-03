@@ -1,0 +1,15 @@
+{
+  "Code not found": "Nem talált kód",
+  "A user with this email already exists": "Egy felhasználó ezzel az e-mail címmel már létezik",
+  "Code has expired": "A kód lejárt",
+  "Email address is invalid": "Az e-mail cím érvénytelen",
+  "Email is required": "Email szükséges",
+  "First name is required": "A keresztnév kötelező",
+  "Internal server error": "Belső szerverhiba",
+  "Invalid input": "Érvénytelen bemenet",
+  "Invalid verification code": "Érvénytelen ellenőrző kód",
+  "Last name is required": "A vezetéknév kötelező",
+  "Verification code must be 6 digits": "Az ellenőrző kódnak 6 számjegyűnek kell lennie",
+  "Verification code must be numeric": "Az ellenőrző kódnak numerikusnak kell lennie",
+  "Welcome to the ServePortal API": "Üdvözöljük a ServePortal API-nál"
+}

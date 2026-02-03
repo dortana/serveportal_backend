@@ -4,23 +4,20 @@ import { z } from "zod";
 import { formatZodError } from "@/utils/functions";
 import crypto from "crypto";
 
-export const signUpSchema = z.object({
-  email: z.email({
-    message: "Email address is invalid",
-  }),
-  firstName: z.string().min(1, { message: "First name is required" }),
-  lastName: z.string().min(1, { message: "Last name is required" }),
-});
-
-export type SignUpInput = z.infer<typeof signUpSchema>;
-
 export const signUpHandler = async (req: Request, res: Response) => {
+  const signUpSchema = z.object({
+    email: z.email({
+      message: res.__("Email address is invalid"),
+    }),
+    firstName: z.string().min(1, { message: res.__("First name is required") }),
+    lastName: z.string().min(1, { message: res.__("Last name is required") }),
+  });
   try {
     const result = signUpSchema.safeParse(req.body);
 
     if (!result.success) {
       return res.status(400).json({
-        message: "Invalid input",
+        message: res.__("Invalid input"),
         errors: formatZodError(result.error),
       });
     }
@@ -33,7 +30,7 @@ export const signUpHandler = async (req: Request, res: Response) => {
 
     if (existingUser) {
       return res.status(409).json({
-        message: "User already exists",
+        message: res.__("A user with this email already exists"),
       });
     }
 
@@ -64,7 +61,7 @@ export const signUpHandler = async (req: Request, res: Response) => {
     console.error(err);
 
     return res.status(500).json({
-      message: "Internal server error",
+      message: res.__("Internal server error"),
     });
   }
 };

@@ -5,22 +5,23 @@ import { formatZodError } from "@/utils/functions";
 import { createToken, tokenMaxAge } from "@/utils/jwt";
 import crypto from "crypto";
 
-export const verifyEmailSchema = z.object({
-  email: z.email("Email address is invalid").min(1, "Email is required"),
-  code: z
-    .string()
-    .length(6, "Verification code must be 6 digits")
-    .regex(/^\d+$/, "Verification code must only contain numbers"),
-});
-export type verifyEmailInput = z.infer<typeof verifyEmailSchema>;
-
 export const signUpVerifyEmailHnadler = async (req: Request, res: Response) => {
+  const verifyEmailSchema = z.object({
+    email: z
+      .email(res.__("Email address is invalid"))
+      .min(1, res.__("Email is required")),
+    code: z
+      .string()
+      .length(6, res.__("Verification code must be 6 digits"))
+      .regex(/^\d+$/, res.__("Verification code must be numeric")),
+  });
+
   try {
     const result = verifyEmailSchema.safeParse(req.body);
 
     if (!result.success) {
       return res.status(400).json({
-        message: "Invalid input",
+        message: res.__("Invalid input"),
         errors: formatZodError(result.error),
       });
     }
@@ -33,11 +34,11 @@ export const signUpVerifyEmailHnadler = async (req: Request, res: Response) => {
     });
 
     if (!record) {
-      return res.status(400).json({ message: "Code not found" });
+      return res.status(400).json({ message: res.__("Code not found") });
     }
 
     if (record.expiresAt < new Date()) {
-      return res.status(400).json({ message: "Code expired" });
+      return res.status(400).json({ message: res.__("Code has expired") });
     }
 
     const codeHash = crypto.createHash("sha256").update(code).digest("hex");
@@ -48,13 +49,15 @@ export const signUpVerifyEmailHnadler = async (req: Request, res: Response) => {
         data: { attempts: { increment: 1 } },
       });
 
-      return res.status(400).json({ message: "Invalid code" });
+      return res
+        .status(400)
+        .json({ message: res.__("Invalid verification code") });
     }
 
     const { user, session } = await prisma.$transaction(async (tx) => {
       const updatedUser = await tx.user.update({
         where: { email },
-        data: { emailVerified: new Date() }, // Store the actual time of verification
+        data: { emailVerified: new Date() },
       });
 
       const newSession = await tx.session.create({
@@ -88,7 +91,7 @@ export const signUpVerifyEmailHnadler = async (req: Request, res: Response) => {
     console.error(err);
 
     return res.status(500).json({
-      message: "Internal server error",
+      message: res.__("Internal server error"),
     });
   }
 };
