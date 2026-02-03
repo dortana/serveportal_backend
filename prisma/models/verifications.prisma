@@ -1,0 +1,13 @@
+model Verification {
+    id String @id @default(uuid())
+
+    email String? @unique
+    phone String? @unique
+
+    codeHash  String
+    expiresAt DateTime
+    attempts  Int      @default(0)
+    createdAt DateTime @default(now())
+
+    @@map("verifications")
+}

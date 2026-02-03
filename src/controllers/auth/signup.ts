@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import prisma from "@/config/db";
 import { z } from "zod";
 import { formatZodError } from "@/utils/functions";
-import { createToken, tokenMaxAge } from "@/utils/jwt";
+import crypto from "crypto";
 
 export const signUpSchema = z.object({
   email: z.email({
@@ -27,33 +27,38 @@ export const signUpHandler = async (req: Request, res: Response) => {
 
     const { email, firstName, lastName } = result.data;
 
-    // const existingUser = await prisma.user.findUnique({
-    //   where: { email },
-    // });
+    const existingUser = await prisma.user.findFirst({
+      where: { email },
+    });
 
-    // if (existingUser) {
-    //   return res.status(409).json({
-    //     message: "User already exists",
-    //   });
-    // }
+    if (existingUser) {
+      return res.status(409).json({
+        message: "User already exists",
+      });
+    }
 
-    // const user = await prisma.user.create({
-    //   data: {
-    //     email,
-    //     firstName,
-    //     lastName,
-    //   },
-    //   select: {
-    //     id: true,
-    //     email: true,
-    //     firstName: true,
-    //     lastName: true,
-    //   },
-    // });
-    const token = createToken({ userId: "dummy_user_id", role: "ADMIN" });
+    const user = await prisma.user.create({
+      data: {
+        email,
+        firstName,
+        lastName,
+      },
+    });
+
+    const code = generateCode();
+    const codeHash = crypto.createHash("sha256").update(code).digest("hex");
+
+    await prisma.verification.create({
+      data: {
+        email,
+        codeHash,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 min
+      },
+    });
+
     return res.status(201).json({
-      message: "User created as ADMIN successfully",
-      token,
+      user,
+      code, // TODO: remove later
     });
   } catch (err) {
     console.error(err);
@@ -63,3 +68,6 @@ export const signUpHandler = async (req: Request, res: Response) => {
     });
   }
 };
+
+const generateCode = () =>
+  Math.floor(100000 + Math.random() * 900000).toString();

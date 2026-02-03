@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { decodeToken } from "@/utils/jwt";
 import { UserRole } from "@/generated/prisma/enums";
+import prisma from "@/config/db";
 
 const requiresAuth =
   (...allowedRoles: UserRole[]) =>
-  (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader?.startsWith("Bearer ")) {
@@ -19,6 +20,20 @@ const requiresAuth =
 
     try {
       const decodedData = decodeToken(token);
+
+      const activeSession = await prisma.session.findUnique({
+        where: { id: decodedData.sessionId },
+      });
+
+      if (!activeSession) {
+        return res.status(401).json({ message: "Session expired or revoked" });
+      }
+
+      if (activeSession.expiresAt < new Date()) {
+        await prisma.session.delete({ where: { id: activeSession.id } });
+        return res.status(401).json({ message: "Session expired" });
+      }
+
       //@ts-ignore
       req.user = decodedData;
       if (allowedRoles.length) {

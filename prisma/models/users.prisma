@@ -4,21 +4,22 @@ model User {
     firstName String
     lastName  String
 
-    email         String
-    emailVerified Boolean @default(false)
-    phone         String?
-    phoneVerified Boolean @default(false)
+    email         String    @unique
+    emailVerified DateTime?
+    phone         String?   @unique
+    phoneVerified DateTime?
 
     image  String?
     role   UserRole   @default(CUSTOMER)
-    status UserStatus @default(ACTIVE)
+    status UserStatus @default(NEW)
 
     verified Boolean @default(false)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now()) @updatedAt
 
-    @@unique([email, phone])
+    sessions Session[]
+
     @@map("users")
 }
 
@@ -34,4 +35,6 @@ enum UserStatus {
     BLOCKED
     BANNED
     DISABLED
+    NEW
+    DELETED
 }
