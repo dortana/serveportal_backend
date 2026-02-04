@@ -7,15 +7,14 @@ import crypto from "crypto";
 
 export const signUpVerifyEmailHnadler = async (req: Request, res: Response) => {
   const verifyEmailSchema = z.object({
-    email: z
-      .email(res.__("Email address is invalid"))
-      .min(1, res.__("Email is required")),
+    email: z.email(res.__("Email address is invalid")).min(5, {
+      message: res.__("Email must must be at least 5 characters long"),
+    }),
     code: z
-      .string()
+      .string(res.__("Verification code is required"))
       .length(6, res.__("Verification code must be 6 digits"))
       .regex(/^\d+$/, res.__("Verification code must be numeric")),
   });
-
   try {
     const result = verifyEmailSchema.safeParse(req.body);
 

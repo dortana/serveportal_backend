@@ -6,11 +6,19 @@ import crypto from "crypto";
 
 export const signUpHandler = async (req: Request, res: Response) => {
   const signUpSchema = z.object({
-    email: z.email({
-      message: res.__("Email address is invalid"),
+    email: z
+      .email({
+        message: res.__("Email address is invalid"),
+      })
+      .min(5, {
+        message: res.__("Email must must be at least 5 characters long"),
+      }),
+    firstName: z.string(res.__("First name is required")).min(2, {
+      message: res.__("Firstname must be at least 2 characters long"),
     }),
-    firstName: z.string().min(1, { message: res.__("First name is required") }),
-    lastName: z.string().min(1, { message: res.__("Last name is required") }),
+    lastName: z.string(res.__("Last name is required")).min(2, {
+      message: res.__("Lastname must must be at least 2 characters long"),
+    }),
   });
   try {
     const result = signUpSchema.safeParse(req.body);
