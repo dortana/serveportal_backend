@@ -4,23 +4,25 @@ import { z } from "zod";
 import { formatZodError } from "@/utils/functions";
 import { createToken, tokenMaxAge } from "@/utils/jwt";
 import crypto from "crypto";
+import { getTranslator } from "@/utils/i18nContext";
 
 export const signUpVerifyEmailHnadler = async (req: Request, res: Response) => {
+  const t = getTranslator();
   const verifyEmailSchema = z.object({
-    email: z.email(res.__("Email address is invalid")).min(5, {
-      message: res.__("Email must must be at least 5 characters long"),
+    email: z.email(t("Email address is invalid")).min(5, {
+      message: t("Email must must be at least 5 characters long"),
     }),
     code: z
-      .string(res.__("Verification code is required"))
-      .length(6, res.__("Verification code must be 6 digits"))
-      .regex(/^\d+$/, res.__("Verification code must be numeric")),
+      .string(t("Verification code is required"))
+      .length(6, t("Verification code must be 6 digits"))
+      .regex(/^\d+$/, t("Verification code must be numeric")),
   });
   try {
     const result = verifyEmailSchema.safeParse(req.body);
 
     if (!result.success) {
       return res.status(400).json({
-        message: res.__("Invalid input"),
+        message: t("Invalid input"),
         errors: formatZodError(result.error),
       });
     }
@@ -33,11 +35,11 @@ export const signUpVerifyEmailHnadler = async (req: Request, res: Response) => {
     });
 
     if (!record) {
-      return res.status(400).json({ message: res.__("Code not found") });
+      return res.status(400).json({ message: t("Code not found") });
     }
 
     if (record.expiresAt < new Date()) {
-      return res.status(400).json({ message: res.__("Code has expired") });
+      return res.status(400).json({ message: t("Code has expired") });
     }
 
     const codeHash = crypto.createHash("sha256").update(code).digest("hex");
@@ -48,9 +50,7 @@ export const signUpVerifyEmailHnadler = async (req: Request, res: Response) => {
         data: { attempts: { increment: 1 } },
       });
 
-      return res
-        .status(400)
-        .json({ message: res.__("Invalid verification code") });
+      return res.status(400).json({ message: t("Invalid verification code") });
     }
 
     const { user, session } = await prisma.$transaction(async (tx) => {
@@ -90,7 +90,7 @@ export const signUpVerifyEmailHnadler = async (req: Request, res: Response) => {
     console.error(err);
 
     return res.status(500).json({
-      message: res.__("Internal server error"),
+      message: t("Internal server error"),
     });
   }
 };

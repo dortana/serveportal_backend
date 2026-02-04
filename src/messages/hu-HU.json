@@ -3,16 +3,16 @@
   "Code has expired": "A kód lejárt",
   "Code not found": "Nem talált kód",
   "Email address is invalid": "Az e-mail cím érvénytelen",
+  "Email must must be at least 5 characters long": "Az e-mailnek legalább 5 karakter hosszúnak kell lennie",
   "First name is required": "A keresztnév kötelező",
+  "Firstname must be at least 2 characters long": "A keresztnévnek legalább 2 karakter hosszúnak kell lennie",
   "Internal server error": "Belső szerverhiba",
   "Invalid input": "Érvénytelen bemenet",
   "Invalid verification code": "Érvénytelen ellenőrző kód",
   "Last name is required": "A vezetéknév kötelező",
+  "Lastname must must be at least 2 characters long": "A vezetéknévnek legalább 2 karakter hosszúnak kell lennie.",
+  "Verification code is required": "Ellenőrző kód szükséges",
   "Verification code must be 6 digits": "Az ellenőrző kódnak 6 számjegyűnek kell lennie",
   "Verification code must be numeric": "Az ellenőrző kódnak numerikusnak kell lennie",
-  "Welcome to the ServePortal API": "Üdvözöljük a ServePortal API-nál",
-  "Email must must be at least 5 characters long": "Az e-mailnek legalább 5 karakter hosszúnak kell lennie",
-  "Firstname must be at least 2 characters long": "A keresztnévnek legalább 2 karakter hosszúnak kell lennie",
-  "Lastname must must be at least 2 characters long": "A vezetéknévnek legalább 2 karakter hosszúnak kell lennie.",
-  "Verification code is required": "Ellenőrző kód szükséges"
+  "Welcome to the ServePortal API!!": "Üdvözöljük a ServePortal API-n!!!"
 }

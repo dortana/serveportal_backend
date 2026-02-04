@@ -3,21 +3,23 @@ import prisma from "@/config/db";
 import { z } from "zod";
 import { formatZodError } from "@/utils/functions";
 import crypto from "crypto";
+import { getTranslator } from "@/utils/i18nContext";
 
 export const signUpHandler = async (req: Request, res: Response) => {
+  const t = getTranslator();
   const signUpSchema = z.object({
     email: z
       .email({
-        message: res.__("Email address is invalid"),
+        message: t("Email address is invalid"),
       })
       .min(5, {
-        message: res.__("Email must must be at least 5 characters long"),
+        message: t("Email must must be at least 5 characters long"),
       }),
-    firstName: z.string(res.__("First name is required")).min(2, {
-      message: res.__("Firstname must be at least 2 characters long"),
+    firstName: z.string(t("First name is required")).min(2, {
+      message: t("Firstname must be at least 2 characters long"),
     }),
-    lastName: z.string(res.__("Last name is required")).min(2, {
-      message: res.__("Lastname must must be at least 2 characters long"),
+    lastName: z.string(t("Last name is required")).min(2, {
+      message: t("Lastname must must be at least 2 characters long"),
     }),
   });
   try {
@@ -25,7 +27,7 @@ export const signUpHandler = async (req: Request, res: Response) => {
 
     if (!result.success) {
       return res.status(400).json({
-        message: res.__("Invalid input"),
+        message: t("Invalid input"),
         errors: formatZodError(result.error),
       });
     }
@@ -38,7 +40,7 @@ export const signUpHandler = async (req: Request, res: Response) => {
 
     if (existingUser) {
       return res.status(409).json({
-        message: res.__("A user with this email already exists"),
+        message: t("A user with this email already exists"),
       });
     }
 
@@ -69,7 +71,7 @@ export const signUpHandler = async (req: Request, res: Response) => {
     console.error(err);
 
     return res.status(500).json({
-      message: res.__("Internal server error"),
+      message: t("Internal server error"),
     });
   }
 };
