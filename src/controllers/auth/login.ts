@@ -5,9 +5,11 @@ import { formatZodError, sendEmailWithTemplate } from "@/utils/functions";
 import crypto from "crypto";
 import { getTranslator } from "@/utils/i18nContext";
 import bcrypt from "bcrypt";
+import { createToken } from "@/utils/jwt";
+import { createSessionData, sanitizeUser } from "./verify";
 import { VerifyEmailTemplate } from "@/emails/VerifyEmailTemplate";
 
-export const signUpHandler = async (req: Request, res: Response) => {
+export const loginHandler = async (req: Request, res: Response) => {
   const t = getTranslator();
   const signUpSchema = z.object({
     email: z
@@ -17,12 +19,6 @@ export const signUpHandler = async (req: Request, res: Response) => {
       .min(5, {
         message: t("Email must be at least 5 characters long"),
       }),
-    firstName: z.string(t("First name is required")).min(2, {
-      message: t("Firstname must be at least 2 characters long"),
-    }),
-    lastName: z.string(t("Last name is required")).min(2, {
-      message: t("Lastname must be at least 2 characters long"),
-    }),
     password: z
       .string(t("Password is required"))
       .min(8, {
@@ -49,35 +45,53 @@ export const signUpHandler = async (req: Request, res: Response) => {
       });
     }
 
-    const { email, firstName, lastName, password } = result.data;
+    const { email, password } = result.data;
 
     const existingUser = await prisma.user.findFirst({
       where: { email },
     });
 
-    if (existingUser) {
+    if (!existingUser) {
       return res.status(409).json({
-        message: t("A user with this email already exists"),
+        message: t("No user found with this email"),
       });
     }
 
-    const passwordHash = await bcrypt.hash(password, 12);
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      existingUser.passwordHash,
+    );
 
-    const user = await prisma.user.create({
-      data: {
-        email,
-        firstName,
-        lastName,
-        passwordHash,
-      },
-    });
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        message: t("Invalid email or password"),
+      });
+    }
+
+    if (!existingUser.twoFactorEnabled && existingUser.emailVerified) {
+      // generate access token and return it
+      const session = await prisma.session.create({
+        data: createSessionData(existingUser.id, req),
+      });
+
+      const access_token = createToken({
+        userId: existingUser.id,
+        role: existingUser.role,
+        sessionId: session.id,
+      });
+
+      return res.status(200).json({
+        user: sanitizeUser(existingUser),
+        access_token,
+      });
+    }
 
     await prisma.verification.deleteMany({
       where: { email, expiresAt: { gt: new Date() } },
     });
 
     const code = generateCode();
-    console.log("OTP Code For Sign Up: ", code); // TODO: remove later
+    console.log("OTP Code For Login: ", code); // TODO: remove later
     const codeHash = crypto.createHash("sha256").update(code).digest("hex");
 
     await prisma.verification.create({
@@ -92,13 +106,13 @@ export const signUpHandler = async (req: Request, res: Response) => {
       to: email,
       subject: "OTP Verification",
       template: VerifyEmailTemplate({
-        firstName: user.firstName,
+        firstName: existingUser.firstName,
         validationCode: code,
       }),
     });
 
-    return res.status(201).json({
-      user,
+    return res.status(200).json({
+      message: t("If the email exists, a verification code has been sent"),
     });
   } catch (err) {
     console.error(err);

@@ -31,6 +31,8 @@
     "@aws-sdk/client-s3": "3.982.0",
     "@prisma/client": "7.3.0",
     "@prisma/extension-accelerate": "3.0.1",
+    "@react-email/components": "1.0.7",
+    "bcrypt": "6.0.0",
     "contentful": "11.10.3",
     "deepl-node": "1.24.0",
     "dotenv": "17.2.3",
@@ -44,10 +46,13 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
+    "@types/bcrypt": "6.0.0",
     "@types/express": "5.0.6",
     "@types/i18n": "0.13.12",
     "@types/jsonwebtoken": "9.0.10",
     "@types/node": "^25.1.0",
+    "@types/react": "19.2.13",
+    "@types/react-dom": "19.2.3",
     "nodemon": "3.1.11",
     "prisma": "7.3.0",
     "ts-node": "10.9.2",

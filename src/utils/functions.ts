@@ -1,6 +1,8 @@
 import { createS3Client } from "@/config/aws";
 import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { ZodError } from "zod";
+import { Resend } from "resend";
+import { appName } from "./app_data";
 
 export const formatZodError = (error: ZodError) => {
   return error.issues.map((issue) => ({
@@ -70,4 +72,22 @@ export const generateFileName = (file: File) => {
   // Remove dashes to get a cleaner long hash
   const uuid = crypto.randomUUID().replace(/-/g, "");
   return `${uuid}.${ext}`;
+};
+
+export const sendEmailWithTemplate = async ({
+  to,
+  subject,
+  template,
+}: {
+  to: string;
+  subject: string;
+  template: React.ReactElement;
+}) => {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  await resend.emails.send({
+    from: appName + " <onboarding@resend.dev>",
+    to: [to],
+    subject: subject,
+    react: template,
+  });
 };

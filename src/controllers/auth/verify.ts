@@ -1,96 +1,199 @@
 import { Request, Response } from "express";
 import prisma from "@/config/db";
 import { z } from "zod";
-import { formatZodError } from "@/utils/functions";
+import { formatZodError, sendEmailWithTemplate } from "@/utils/functions";
 import { createToken, tokenMaxAge } from "@/utils/jwt";
 import crypto from "crypto";
 import { getTranslator } from "@/utils/i18nContext";
+import bcrypt from "bcrypt";
+import { User } from "@/generated/prisma/client";
+import { NewPasswordEmailTemplate } from "@/emails/NewPasswordEmailTemplate";
 
-export const signUpVerifyEmailHnadler = async (req: Request, res: Response) => {
-  const t = getTranslator();
-  const verifyEmailSchema = z.object({
-    email: z.email(t("Email address is invalid")).min(5, {
-      message: t("Email must must be at least 5 characters long"),
-    }),
+const createVerifyEmailSchema = (t: (key: string) => string) =>
+  z.object({
+    email: z
+      .email(t("Email address is invalid"))
+      .min(5, { message: t("Email must be at least 5 characters long") }),
+
     code: z
       .string(t("Verification code is required"))
       .length(6, t("Verification code must be 6 digits"))
       .regex(/^\d+$/, t("Verification code must be numeric")),
   });
-  try {
-    const result = verifyEmailSchema.safeParse(req.body);
 
-    if (!result.success) {
+export const verifyEmailHandler = async (req: Request, res: Response) => {
+  const t = getTranslator();
+  const schema = createVerifyEmailSchema(t);
+
+  try {
+    const parsed = schema.safeParse(req.body);
+    if (!parsed.success) {
       return res.status(400).json({
         message: t("Invalid input"),
-        errors: formatZodError(result.error),
+        errors: formatZodError(parsed.error),
       });
     }
 
-    const { email, code } = result.data;
+    const { email, code } = parsed.data;
 
-    const record = await prisma.verification.findFirst({
-      where: { email },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (!record) {
-      return res.status(400).json({ message: t("Code not found") });
-    }
-
-    if (record.expiresAt < new Date()) {
-      return res.status(400).json({ message: t("Code has expired") });
-    }
-
-    const codeHash = crypto.createHash("sha256").update(code).digest("hex");
-
-    if (codeHash !== record.codeHash) {
-      await prisma.verification.update({
-        where: { id: record.id },
-        data: { attempts: { increment: 1 } },
-      });
-
-      return res.status(400).json({ message: t("Invalid verification code") });
-    }
+    const record = await verifyEmailCode(email, code, t);
 
     const { user, session } = await prisma.$transaction(async (tx) => {
-      const updatedUser = await tx.user.update({
+      let user = await tx.user.findUniqueOrThrow({
         where: { email },
-        data: { emailVerified: new Date() },
       });
 
-      const newSession = await tx.session.create({
-        data: {
-          userId: updatedUser.id,
-          expiresAt: new Date(Date.now() + tokenMaxAge * 1000),
-          sessionToken: crypto.randomBytes(32).toString("hex"),
-          userAgent: req.headers["user-agent"] || null,
-          ipAddress: req.ip || null,
-        },
+      if (!user.emailVerified) {
+        user = await tx.user.update({
+          where: { email },
+          data: { emailVerified: new Date() },
+        });
+      }
+
+      const session = await tx.session.create({
+        data: createSessionData(user.id, req),
       });
 
-      await tx.verification.delete({
-        where: { id: record.id },
-      });
+      await tx.verification.delete({ where: { id: record.id } });
 
-      return { user: updatedUser, session: newSession };
+      return { user, session };
     });
 
-    const token = createToken({
+    const access_token = createToken({
       userId: user.id,
       role: user.role,
       sessionId: session.id,
     });
 
-    return res.status(200).json({
-      user,
-      token,
-    });
-  } catch (err) {
+    return res.status(200).json({ user: sanitizeUser(user), access_token });
+  } catch (err: any) {
     console.error(err);
 
-    return res.status(500).json({
-      message: t("Internal server error"),
+    return res.status(400).json({
+      message: err.message ?? t("Internal server error"),
     });
   }
+};
+
+export const forgotPasswordVerifyEmailHandler = async (
+  req: Request,
+  res: Response,
+) => {
+  const t = getTranslator();
+  const schema = createVerifyEmailSchema(t);
+
+  try {
+    const parsed = schema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: t("Invalid input"),
+        errors: formatZodError(parsed.error),
+      });
+    }
+
+    const { email, code } = parsed.data;
+
+    const existingUser = await prisma.user.findFirst({
+      where: { email },
+    });
+
+    if (!existingUser) {
+      return res.status(409).json({
+        message: t("No user found with this email"),
+      });
+    }
+
+    const record = await verifyEmailCode(email, code, t);
+
+    await prisma.verification.delete({ where: { id: record.id } });
+
+    const password = crypto.randomBytes(6).toString("hex").slice(0, 12);
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    await prisma.user.update({
+      where: { email },
+      data: {
+        passwordHash,
+      },
+    });
+
+    console.log("New Password: ", password);
+
+    await sendEmailWithTemplate({
+      to: email,
+      subject: "New Password",
+      template: NewPasswordEmailTemplate({
+        // @ts-ignore
+        firstName: existingUser.firstName,
+        password,
+      }),
+    });
+
+    return res.status(200).json({
+      message: t(
+        "Verification successful. You will recevice your new password within a few minutes by email.",
+      ),
+    });
+  } catch (err: any) {
+    console.error(err);
+
+    return res.status(400).json({
+      message: err.message ?? t("Internal server error"),
+    });
+  }
+};
+
+export const verifyEmailCode = async (
+  email: string,
+  code: string,
+  t: (key: string) => string,
+) => {
+  const record = await prisma.verification.findFirst({
+    where: { email },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (!record) {
+    throw new Error(t("Code not found"));
+  }
+
+  if (record.expiresAt < new Date()) {
+    throw new Error(t("Code has expired"));
+  }
+
+  const codeHash = crypto.createHash("sha256").update(code).digest("hex");
+
+  if (codeHash !== record.codeHash) {
+    await prisma.verification.update({
+      where: { id: record.id },
+      data: { attempts: { increment: 1 } },
+    });
+
+    throw new Error(t("Invalid verification code"));
+  }
+
+  return record;
+};
+
+export const createSessionData = (userId: string, req: Request) => {
+  return {
+    userId,
+    expiresAt: new Date(Date.now() + tokenMaxAge * 1000),
+    sessionToken: crypto.randomBytes(32).toString("hex"),
+    userAgent: req.headers["user-agent"] || null,
+    ipAddress: req.ip || null,
+  };
+};
+
+export const sanitizeUser = (user: User) => {
+  // this is what we send to clients
+  return {
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+    emailVerified: user.emailVerified,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
 };
