@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
-    "build": "npx prisma generate && tsc",
+    "build": "npx prisma generate && tsc && cp -r src/messages dist/messages",
     "start": "node ./dist/index.js",
     "typecheck": "tsc --noEmit",
     "prisma": "prisma",
@@ -65,6 +65,6 @@
     "node": "22.x"
   },
   "_moduleAliases": {
-    "@": "src"
+    "@": "dist"
   }
 }
