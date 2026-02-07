@@ -23,6 +23,7 @@ model User {
     updatedAt DateTime @default(now()) @updatedAt
 
     sessions Session[]
+    orders   Order[]
 
     @@map("users")
 }
