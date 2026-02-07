@@ -5,5 +5,11 @@
       "source": "/(.*)",
       "destination": "/src"
     }
+  ],
+  "builds": [
+    {
+      "src": "src/server.ts",
+      "use": "@vercel/node"
+    }
   ]
 }

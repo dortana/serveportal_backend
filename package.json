@@ -40,6 +40,7 @@
     "i18n": "0.15.3",
     "i18next-parser": "9.3.0",
     "jsonwebtoken": "9.0.3",
+    "module-alias": "2.3.4",
     "prettier": "3.8.1",
     "resend": "6.9.1",
     "sort-json": "2.0.1",
@@ -62,5 +63,8 @@
   },
   "engines": {
     "node": "22.x"
+  },
+  "_moduleAliases": {
+    "@": "dist"
   }
 }

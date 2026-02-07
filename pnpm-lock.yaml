@@ -44,6 +44,9 @@ importers:
       jsonwebtoken:
         specifier: 9.0.3
         version: 9.0.3
+      module-alias:
+        specifier: 2.3.4
+        version: 2.3.4
       prettier:
         specifier: 3.8.1
         version: 3.8.1
@@ -1966,6 +1969,9 @@ packages:
   mktemp@2.0.2:
     resolution: {integrity: sha512-Q9wJ/xhzeD9Wua1MwDN2v3ah3HENsUVSlzzL9Qw149cL9hHZkXtQGl3Eq36BbdLV+/qUwaP1WtJQ+H/+Oxso8g==}
     engines: {node: 20 || 22 || 24}
+
+  module-alias@2.3.4:
+    resolution: {integrity: sha512-bOclZt8hkpuGgSSoG07PKmvzTizROilUTvLNyrMqvlC9snhs7y7GzjNWAVbISIOlhCP1T14rH1PDAV9iNyBq/w==}
 
   moo@0.5.2:
     resolution: {integrity: sha512-iSAJLHYKnX41mKcJKjqvnAN9sf0LMDTXDEvFv+ffuRR9a1MIuXLjMNL6EsnDHSkKLTWNqQQ5uo61P4EbU4NU+Q==}
@@ -4943,6 +4949,8 @@ snapshots:
   minipass@7.1.2: {}
 
   mktemp@2.0.2: {}
+
+  module-alias@2.3.4: {}
 
   moo@0.5.2: {}
 
