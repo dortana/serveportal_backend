@@ -6,6 +6,7 @@ import crypto from "crypto";
 import { getTranslator } from "@/utils/i18nContext";
 import bcrypt from "bcrypt";
 import { VerifyEmailTemplate } from "@/emails/VerifyEmailTemplate";
+import logger from "@/utils/logger";
 
 export const signUpHandler = async (req: Request, res: Response) => {
   const t = getTranslator();
@@ -100,8 +101,10 @@ export const signUpHandler = async (req: Request, res: Response) => {
     return res.status(201).json({
       user,
     });
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    logger.error("Signup failed", {
+      error,
+    });
 
     return res.status(500).json({
       message: t("Internal server error"),

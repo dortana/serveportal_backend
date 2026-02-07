@@ -8,6 +8,7 @@ import { getTranslator } from "@/utils/i18nContext";
 import bcrypt from "bcrypt";
 import { User } from "@/generated/prisma/client";
 import { NewPasswordEmailTemplate } from "@/emails/NewPasswordEmailTemplate";
+import logger from "@/utils/logger";
 
 const createVerifyEmailSchema = (t: (key: string) => string) =>
   z.object({
@@ -66,11 +67,12 @@ export const verifyEmailHandler = async (req: Request, res: Response) => {
     });
 
     return res.status(200).json({ user: sanitizeUser(user), access_token });
-  } catch (err: any) {
-    console.error(err);
-
-    return res.status(400).json({
-      message: err.message ?? t("Internal server error"),
+  } catch (error) {
+    logger.error("Email verification failed", {
+      error,
+    });
+    return res.status(500).json({
+      message: t("Internal server error"),
     });
   }
 };
@@ -135,11 +137,13 @@ export const forgotPasswordVerifyEmailHandler = async (
         "Verification successful. You will recevice your new password within a few minutes by email.",
       ),
     });
-  } catch (err: any) {
-    console.error(err);
+  } catch (error) {
+    logger.error("Forgot password verification failed", {
+      error,
+    });
 
-    return res.status(400).json({
-      message: err.message ?? t("Internal server error"),
+    return res.status(500).json({
+      message: t("Internal server error"),
     });
   }
 };

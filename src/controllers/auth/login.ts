@@ -8,6 +8,7 @@ import bcrypt from "bcrypt";
 import { createToken } from "@/utils/jwt";
 import { createSessionData, sanitizeUser } from "./verify";
 import { VerifyEmailTemplate } from "@/emails/VerifyEmailTemplate";
+import logger from "@/utils/logger";
 
 export const loginHandler = async (req: Request, res: Response) => {
   const t = getTranslator();
@@ -114,8 +115,10 @@ export const loginHandler = async (req: Request, res: Response) => {
     return res.status(200).json({
       message: t("If the email exists, a verification code has been sent"),
     });
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    logger.error("Login failed", {
+      error,
+    });
 
     return res.status(500).json({
       message: t("Internal server error"),

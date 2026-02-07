@@ -43,6 +43,7 @@
     "prettier": "3.8.1",
     "resend": "6.9.1",
     "sort-json": "2.0.1",
+    "winston": "3.19.0",
     "zod": "4.3.6"
   },
   "devDependencies": {

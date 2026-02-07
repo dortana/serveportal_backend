@@ -4,6 +4,7 @@ import { z } from "zod";
 import { formatZodError } from "@/utils/functions";
 import crypto from "crypto";
 import { getTranslator } from "@/utils/i18nContext";
+import logger from "@/utils/logger";
 
 export const forgotPasswordHandler = async (req: Request, res: Response) => {
   const t = getTranslator();
@@ -57,8 +58,10 @@ export const forgotPasswordHandler = async (req: Request, res: Response) => {
     return res.status(200).json({
       message: t("If the email exists, a verification code has been sent"),
     });
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    logger.error("Forgot password request failed", {
+      error,
+    });
 
     return res.status(500).json({
       message: t("Internal server error"),

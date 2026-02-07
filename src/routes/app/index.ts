@@ -1,8 +1,8 @@
-import { getCustomers } from "@/controllers/app";
+import { getCategories } from "@/controllers/app";
 import { Router } from "express";
 
 const router = Router();
 
-router.get("/", getCustomers);
+router.get("/categories", getCategories);
 
 export default router;
