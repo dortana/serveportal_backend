@@ -6,6 +6,7 @@ import routes from "@/routes";
 import path from "path";
 import { getTranslator } from "./utils/i18nContext";
 import { i18nContextMiddleware } from "./middlewares/i18nContextMiddleware";
+import type { Request, Response } from "express";
 
 i18n.configure({
   locales: ["en-US", "hu-HU"],
@@ -23,7 +24,7 @@ app.use(express.json());
 
 app.use("/api", routes);
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   const t = getTranslator();
   return res
     .status(200)

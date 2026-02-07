@@ -1,9 +1,9 @@
 import { runWithI18n } from "@/utils/i18nContext";
-import type { Request, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 
 export const i18nContextMiddleware = (
   req: Request,
-  res: any,
+  res: Response,
   next: NextFunction,
 ) => {
   if (typeof res.__ !== "function" || typeof res.getLocale !== "function") {
