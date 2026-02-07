@@ -1,6 +1,6 @@
 import { getServicesFromContentful } from "@/config/contentful/helper";
 import { getCurrentLanguage, getTranslator } from "@/utils/i18nContext";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import logger from "@/utils/logger";
 import { Entry } from "contentful";
 import { ServiceSkeleton } from "@/config/contentful/types";

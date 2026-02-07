@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import prisma from "@/config/db";
 import { z } from "zod";
 import { formatZodError, sendEmailWithTemplate } from "@/utils/functions";

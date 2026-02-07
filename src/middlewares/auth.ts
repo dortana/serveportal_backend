@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { decodeToken } from "@/utils/jwt";
 import { UserRole } from "@/generated/prisma/enums";
 import prisma from "@/config/db";

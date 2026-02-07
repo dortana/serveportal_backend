@@ -1,6 +1,7 @@
 import "dotenv/config";
 import "module-alias/register";
-import express, { Express, Request, Response, NextFunction } from "express";
+import express, { Express } from "express";
+import type { Request, Response, NextFunction } from "express";
 import i18n from "i18n";
 import routes from "@/routes";
 import path from "path";

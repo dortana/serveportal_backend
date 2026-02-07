@@ -1,5 +1,5 @@
 import { runWithI18n } from "@/utils/i18nContext";
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 
 export const i18nContextMiddleware = (
   req: Request,
