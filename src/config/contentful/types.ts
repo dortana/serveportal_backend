@@ -1,22 +1,28 @@
-import { EntryFieldTypes, EntrySkeletonType } from 'contentful';
+import {
+  Asset,
+  Entry,
+  EntryFieldTypes,
+  EntrySkeletonType,
+  UnresolvedLink,
+} from "contentful";
 
 export enum ContentType {
-  Category = 'category',
-  Service = 'service',
+  Category = "category",
+  Service = "service",
 }
 
 export enum QuestionType {
-  SINGLE_SELECT = 'SINGLE_SELECT',
-  MULTI_SELECT = 'MULTI_SELECT',
-  NUMERICAL_MULTI_SELECT = 'NUMERICAL_MULTI_SELECT',
-  NUMERICAL_SINGLE_SELECT = 'NUMERICAL_SINGLE_SELECT',
-  TEXT = 'TEXT',
-  FILE = 'FILE',
-  VOICE = 'VOICE',
-  TIMESTAMP = 'TIMESTAMP',
-  MOBILE = 'MOBILE',
-  ADDRESS = 'ADDRESS',
-  NAME = 'NAME',
+  SINGLE_SELECT = "SINGLE_SELECT",
+  MULTI_SELECT = "MULTI_SELECT",
+  NUMERICAL_MULTI_SELECT = "NUMERICAL_MULTI_SELECT",
+  NUMERICAL_SINGLE_SELECT = "NUMERICAL_SINGLE_SELECT",
+  TEXT = "TEXT",
+  FILE = "FILE",
+  VOICE = "VOICE",
+  TIMESTAMP = "TIMESTAMP",
+  MOBILE = "MOBILE",
+  ADDRESS = "ADDRESS",
+  NAME = "NAME",
 }
 
 export type ServiceSkeleton = EntrySkeletonType<
@@ -28,9 +34,9 @@ export type CategorySkeleton = EntrySkeletonType<
   ContentType.Category
 >;
 
-export type QuestionSkeleton = EntrySkeletonType<IQuestionFields, 'question'>;
+export type QuestionSkeleton = EntrySkeletonType<IQuestionFields, "question">;
 
-export type OptionSkeleton = EntrySkeletonType<IOptionFields, 'option'>;
+export type OptionSkeleton = EntrySkeletonType<IOptionFields, "option">;
 
 export interface IQuestionFields {
   title: EntryFieldTypes.Text;
@@ -78,3 +84,15 @@ export interface ICategoryFields {
   description?: EntryFieldTypes.Text;
   parentCategory?: EntryFieldTypes.EntryLink<CategorySkeleton>;
 }
+
+export const isResolvedAsset = (
+  asset: Asset | UnresolvedLink<"Asset"> | undefined,
+): asset is Asset => {
+  return !!asset && "fields" in asset;
+};
+
+export const isResolvedEntry = <TSkeleton extends EntrySkeletonType>(
+  entry: Entry<TSkeleton> | UnresolvedLink<"Entry"> | undefined,
+): entry is Entry<TSkeleton> => {
+  return !!entry && "fields" in entry;
+};
