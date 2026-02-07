@@ -8,6 +8,7 @@
     "dev": "nodemon",
     "build": "npx prisma generate && tsc && tsc-alias && cp -r src/messages dist/messages",
     "start": "node ./dist/index.js",
+    "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "prisma": "prisma",
     "db:migrate": "prisma migrate dev",
@@ -48,6 +49,8 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "3",
+    "eslint": "9.39.1",
     "@types/bcrypt": "6.0.0",
     "@types/express": "5.0.6",
     "@types/i18n": "0.13.12",
