@@ -1,8 +1,8 @@
-import "express";
+import "express-serve-static-core";
 
-declare module "express" {
+declare module "express-serve-static-core" {
   interface Response {
-    __?: (key: string) => string;
-    getLocale?: () => string;
+    __?(key: string, options?: any): string;
+    getLocale?(): string;
   }
 }

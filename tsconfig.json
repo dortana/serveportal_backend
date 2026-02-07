@@ -24,9 +24,5 @@
     "exactOptionalPropertyTypes": true
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts"],
-  "exclude": [
-    "node_modules",
-    "prisma.config.ts",
-    "src/middlewares/i18nContextMiddleware.ts"
-  ]
+  "exclude": ["node_modules", "prisma.config.ts"]
 }
