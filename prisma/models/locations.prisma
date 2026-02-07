@@ -1,0 +1,19 @@
+model Location {
+  id      String @id @default(uuid())
+  city    String
+  state   String
+  country String
+
+  latitude  Float
+  longitude Float
+
+  isActive Boolean @default(true)
+
+  services Json[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([latitude, longitude])
+  @@map("locations")
+}
