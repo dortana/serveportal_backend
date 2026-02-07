@@ -1,5 +1,4 @@
 import "dotenv/config";
-import "module-alias/register";
 import express from "express";
 import type { Request, Response } from "express";
 import i18n from "i18n";
