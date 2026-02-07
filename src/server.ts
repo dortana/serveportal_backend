@@ -25,9 +25,10 @@ app.use("/api", routes);
 
 app.get("/", (req: Request, res: Response) => {
   const t = getTranslator();
-  return res
-    .status(200)
-    .json({ message: t("Welcome to the ServePortal API!!") });
+  return res.status(200).json({
+    message:
+      t("Welcome to the ServePortal API!!") + `END: ${process.env.NODE_ENV}`,
+  });
 });
 
 export default app;

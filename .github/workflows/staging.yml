@@ -69,7 +69,7 @@ jobs:
         run: pnpm prisma generate
 
       - name: Run TypeScript Type Checking
-        run: pnpm type-check
+        run: pnpm typecheck
 
   deploy-staging:
     name: Deploy Staging to Vercel
