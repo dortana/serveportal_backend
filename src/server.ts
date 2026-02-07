@@ -1,6 +1,6 @@
 import "dotenv/config";
 import "module-alias/register";
-import express, { Express } from "express";
+import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import i18n from "i18n";
 import routes from "@/routes";
@@ -15,7 +15,7 @@ i18n.configure({
   objectNotation: true,
 });
 
-const app: Express = express();
+const app = express();
 
 app.use(i18n.init);
 app.use(i18nContextMiddleware);
