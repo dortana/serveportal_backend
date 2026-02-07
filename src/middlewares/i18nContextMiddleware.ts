@@ -1,7 +1,7 @@
 import { runWithI18n } from "@/utils/i18nContext";
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction, RequestHandler } from "express";
 
-export const i18nContextMiddleware = (
+export const i18nContextMiddleware: RequestHandler = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -14,5 +14,7 @@ export const i18nContextMiddleware = (
   const t = res.__.bind(res);
   const locale = res.getLocale();
 
-  runWithI18n(t, locale, next);
+  runWithI18n(t, locale, () => {
+    next();
+  });
 };

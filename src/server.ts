@@ -1,6 +1,6 @@
 import "dotenv/config";
 import "module-alias/register";
-import express from "express";
+import express, { RequestHandler } from "express";
 import i18n from "i18n";
 import routes from "@/routes";
 import path from "path";
@@ -23,11 +23,13 @@ app.use(express.json());
 
 app.use("/api", routes);
 
-app.get("/", (req, res) => {
+const rootHandler: RequestHandler = (req, res) => {
   const t = getTranslator();
-  return res
-    .status(200)
-    .json({ message: t("Welcome to the ServePortal API!!") });
-});
+  res.status(200).json({
+    message: t("Welcome to the ServePortal API!!"),
+  });
+};
+
+app.get("/", rootHandler);
 
 export default app;
