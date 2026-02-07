@@ -1,6 +1,7 @@
 import "dotenv/config";
 import "module-alias/register";
 import express from "express";
+import type { Request, Response } from "express";
 import i18n from "i18n";
 import routes from "@/routes";
 import path from "path";
@@ -23,7 +24,7 @@ app.use(express.json());
 
 app.use("/api", routes);
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   const t = getTranslator();
   return res
     .status(200)
