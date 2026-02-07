@@ -6,10 +6,10 @@ export const i18nContextMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  const t = res.__.bind(res);
+  const t = res.__;
   const locale = res.getLocale();
 
-  runWithI18n(t, locale, () => {
+  runWithI18n(t.bind(res), locale, () => {
     next();
   });
 };
