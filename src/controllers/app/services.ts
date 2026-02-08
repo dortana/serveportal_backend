@@ -10,10 +10,12 @@ export const getServices = async (req: Request, res: Response) => {
   const t = getTranslator();
   const locale = getCurrentLanguage();
   const slug = req.query.slug as string | undefined;
+  const baseSlug = req.query.baseSlug as string | undefined;
   try {
     const services = await getServicesFromContentful({
       locale,
       ...(slug && { slug }),
+      ...(baseSlug && { baseSlug }),
     });
 
     return res.status(200).json({ services: mapServicesResult(services) });
