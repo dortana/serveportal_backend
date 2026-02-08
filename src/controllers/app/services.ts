@@ -9,9 +9,11 @@ import { mapServiceBulk } from "@/config/contentful/mappers";
 export const getServices = async (req: Request, res: Response) => {
   const t = getTranslator();
   const locale = getCurrentLanguage();
+  const slug = req.query.slug as string | undefined;
   try {
     const services = await getServicesFromContentful({
       locale,
+      ...(slug && { slug }),
     });
 
     return res.status(200).json({ services: mapServicesResult(services) });
