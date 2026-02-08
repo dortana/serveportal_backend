@@ -8,7 +8,7 @@ import logger from "@/utils/logger";
 
 export const forgotPasswordHandler = async (req: Request, res: Response) => {
   const t = getTranslator();
-  const signUpSchema = z.object({
+  const forgotPasswordSchema = z.object({
     email: z
       .email({
         message: t("Email address is invalid"),
@@ -18,7 +18,7 @@ export const forgotPasswordHandler = async (req: Request, res: Response) => {
       }),
   });
   try {
-    const result = signUpSchema.safeParse(req.body);
+    const result = forgotPasswordSchema.safeParse(req.body);
 
     if (!result.success) {
       return res.status(400).json({

@@ -9,6 +9,7 @@ import bcrypt from "bcrypt";
 import { User } from "@/generated/prisma/client";
 import { NewPasswordEmailTemplate } from "@/emails/NewPasswordEmailTemplate";
 import logger from "@/utils/logger";
+import { ApiError } from "@/utils/api-error";
 
 const createVerifyEmailSchema = (t: (key: string) => string) =>
   z.object({
@@ -71,6 +72,11 @@ export const verifyEmailHandler = async (req: Request, res: Response) => {
     logger.error("Email verification failed", {
       error,
     });
+    if (error instanceof ApiError) {
+      return res.status(error.status).json({
+        message: error.message,
+      });
+    }
     return res.status(500).json({
       message: t("Internal server error"),
     });
@@ -142,6 +148,12 @@ export const forgotPasswordVerifyEmailHandler = async (
       error,
     });
 
+    if (error instanceof ApiError) {
+      return res.status(error.status).json({
+        message: error.message,
+      });
+    }
+
     return res.status(500).json({
       message: t("Internal server error"),
     });
@@ -159,11 +171,11 @@ export const verifyEmailCode = async (
   });
 
   if (!record) {
-    throw new Error(t("Code not found"));
+    throw new ApiError(t("Code not found"), 404);
   }
 
   if (record.expiresAt < new Date()) {
-    throw new Error(t("Code has expired"));
+    throw new ApiError(t("Code has expired"), 410);
   }
 
   const codeHash = crypto.createHash("sha256").update(code).digest("hex");
@@ -174,7 +186,7 @@ export const verifyEmailCode = async (
       data: { attempts: { increment: 1 } },
     });
 
-    throw new Error(t("Invalid verification code"));
+    throw new ApiError(t("Invalid verification code"), 400);
   }
 
   return record;

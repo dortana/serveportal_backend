@@ -1,11 +1,13 @@
 {
   "A user with this email already exists": "Egy felhasználó ezzel az e-mail címmel már létezik",
+  "A verification code has been sent to your email, Please check your inbox.": "Az ellenőrző kódot elküldtük az Ön e-mail címére, kérjük, ellenőrizze a beérkezett üzeneteket.",
   "Code has expired": "A kód lejárt",
   "Code not found": "Nem talált kód",
   "Email address is invalid": "Az e-mail cím érvénytelen",
   "Email must be at least 5 characters long": "Az e-mailnek legalább 5 karakter hosszúnak kell lennie",
   "First name is required": "A keresztnév kötelező",
   "Firstname must be at least 2 characters long": "A keresztnévnek legalább 2 karakter hosszúnak kell lennie",
+  "If the email exists, A verification code has been sent to your email, Please check your inbox.": "Ha az e-mail létezik, A verifikációs kódot elküldtük az Ön e-mail címére, Kérjük, ellenőrizze a beérkezett üzeneteket.",
   "Internal server error": "Belső szerverhiba",
   "Invalid email or password": "Érvénytelen e-mail vagy jelszó",
   "Invalid input": "Érvénytelen bemenet",
@@ -23,7 +25,5 @@
   "Verification code must be 6 digits": "Az ellenőrző kódnak 6 számjegyűnek kell lennie",
   "Verification code must be numeric": "Az ellenőrző kódnak numerikusnak kell lennie",
   "Verification successful. You will recevice your new password within a few minutes by email.": "Az ellenőrzés sikeres. Az új jelszót néhány percen belül megkapja e-mailben.",
-  "A verification code has been sent to your email, Please check your inbox.": "Az ellenőrző kódot elküldtük az Ön e-mail címére, kérjük, ellenőrizze a beérkezett üzeneteket.",
-  "If the email exists, A verification code has been sent to your email, Please check your inbox.": "Ha az e-mail létezik, A verifikációs kódot elküldtük az Ön e-mail címére, Kérjük, ellenőrizze a beérkezett üzeneteket.",
   "Welcome to the ServePortal API": "Üdvözöljük a ServePortal API-nál"
 }
