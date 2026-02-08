@@ -10,6 +10,8 @@ import { User } from "@/generated/prisma/client";
 import { NewPasswordEmailTemplate } from "@/emails/NewPasswordEmailTemplate";
 import logger from "@/utils/logger";
 import { ApiError } from "@/utils/api-error";
+import { generateCode } from "./signup";
+import VerifyEmailTemplate from "@/emails/VerifyEmailTemplate";
 
 const createVerifyEmailSchema = (t: (key: string) => string) =>
   z.object({
@@ -153,6 +155,83 @@ export const forgotPasswordVerifyEmailHandler = async (
         message: error.message,
       });
     }
+
+    return res.status(500).json({
+      message: t("Internal server error"),
+    });
+  }
+};
+export const resendVerificationEmailHandler = async (
+  req: Request,
+  res: Response,
+) => {
+  const t = getTranslator();
+  const loginSchema = z.object({
+    email: z
+      .email({
+        message: t("Email address is invalid"),
+      })
+      .min(5, {
+        message: t("Email must be at least 5 characters long"),
+      }),
+  });
+  try {
+    const result = loginSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        message: t("Invalid input"),
+        errors: formatZodError(result.error),
+      });
+    }
+
+    const { email } = result.data;
+
+    const existingUser = await prisma.user.findFirst({
+      where: { email },
+    });
+
+    if (!existingUser) {
+      return res.status(409).json({
+        message: t("No user found with this email"),
+      });
+    }
+
+    await prisma.verification.deleteMany({
+      where: { email, expiresAt: { gt: new Date() } },
+    });
+
+    const code = generateCode();
+    console.log("OTP Code For Resend Code: ", code); // TODO: remove later
+    const codeHash = crypto.createHash("sha256").update(code).digest("hex");
+
+    await prisma.verification.create({
+      data: {
+        email,
+        codeHash,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 min
+      },
+    });
+
+    await sendEmailWithTemplate({
+      to: email,
+      subject: "OTP Verification",
+      template: VerifyEmailTemplate({
+        firstName: existingUser.firstName,
+        validationCode: code,
+      }),
+    });
+
+    return res.status(200).json({
+      otpRequired: true,
+      message: t(
+        "A new verification code has been sent to your email, Please check your inbox.",
+      ),
+    });
+  } catch (error) {
+    logger.error("Resend failed", {
+      error,
+    });
 
     return res.status(500).json({
       message: t("Internal server error"),

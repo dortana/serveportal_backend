@@ -114,5 +114,5 @@ export const signUpHandler = async (req: Request, res: Response) => {
   }
 };
 
-const generateCode = () =>
+export const generateCode = () =>
   Math.floor(100000 + Math.random() * 900000).toString();

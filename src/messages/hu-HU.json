@@ -25,5 +25,6 @@
   "Verification code must be 6 digits": "Az ellenőrző kódnak 6 számjegyűnek kell lennie",
   "Verification code must be numeric": "Az ellenőrző kódnak numerikusnak kell lennie",
   "Verification successful. You will recevice your new password within a few minutes by email.": "Az ellenőrzés sikeres. Az új jelszót néhány percen belül megkapja e-mailben.",
-  "Welcome to the ServePortal API": "Üdvözöljük a ServePortal API-nál"
+  "Welcome to the ServePortal API": "Üdvözöljük a ServePortal API-nál",
+  "A new verification code has been sent to your email, Please check your inbox.": "Új ellenőrző kódot küldtünk az Ön e-mail címére, kérjük, ellenőrizze a beérkezett üzeneteket."
 }

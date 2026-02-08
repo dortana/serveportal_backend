@@ -9,6 +9,7 @@ import { createToken } from "@/utils/jwt";
 import { createSessionData, sanitizeUser } from "./verify";
 import { VerifyEmailTemplate } from "@/emails/VerifyEmailTemplate";
 import logger from "@/utils/logger";
+import { generateCode } from "./signup";
 
 export const loginHandler = async (req: Request, res: Response) => {
   const t = getTranslator();
@@ -128,6 +129,3 @@ export const loginHandler = async (req: Request, res: Response) => {
     });
   }
 };
-
-const generateCode = () =>
-  Math.floor(100000 + Math.random() * 900000).toString();
