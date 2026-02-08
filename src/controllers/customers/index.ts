@@ -29,7 +29,7 @@ export const getMyInformation = async (req: Request, res: Response) => {
 
     if (!existingUser) {
       return res.status(409).json({
-        message: t("No user found with this email"),
+        message: t("No user found"),
       });
     }
 

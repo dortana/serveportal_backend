@@ -15,6 +15,8 @@
   "Invalid verification code": "Invalid verification code",
   "Last name is required": "Last name is required",
   "Lastname must be at least 2 characters long": "Lastname must be at least 2 characters long",
+  "Logout successful.": "Logout successful.",
+  "No user found": "No user found",
   "No user found with this email": "No user found with this email",
   "Password is required": "Password is required",
   "Password must be at least 8 characters long": "Password must be at least 8 characters long",
