@@ -108,7 +108,7 @@ export const forgotPasswordVerifyEmailHandler = async (
     });
 
     if (!existingUser) {
-      return res.status(409).json({
+      return res.status(404).json({
         message: t("No user found with this email"),
       });
     }
@@ -192,24 +192,26 @@ export const resendVerificationEmailHandler = async (
     });
 
     if (!existingUser) {
-      return res.status(409).json({
+      return res.status(404).json({
         message: t("No user found with this email"),
       });
     }
-
-    await prisma.verification.deleteMany({
-      where: { email, expiresAt: { gt: new Date() } },
-    });
 
     const code = generateCode();
     console.log("OTP Code For Resend Code: ", code); // TODO: remove later
     const codeHash = crypto.createHash("sha256").update(code).digest("hex");
 
-    await prisma.verification.create({
-      data: {
+    await prisma.verification.upsert({
+      where: { email },
+      update: {
+        codeHash,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+        attempts: 0,
+      },
+      create: {
         email,
         codeHash,
-        expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 min
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
       },
     });
 
