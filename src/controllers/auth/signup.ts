@@ -99,7 +99,9 @@ export const signUpHandler = async (req: Request, res: Response) => {
     });
 
     return res.status(201).json({
-      user,
+      message: t(
+        "A verification code has been sent to your email, Please check your inbox.",
+      ),
     });
   } catch (error) {
     logger.error("Signup failed", {

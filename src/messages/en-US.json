@@ -1,12 +1,13 @@
 {
   "A user with this email already exists": "A user with this email already exists",
+  "A verification code has been sent to your email, Please check your inbox.": "A verification code has been sent to your email, Please check your inbox.",
   "Code has expired": "Code has expired",
   "Code not found": "Code not found",
   "Email address is invalid": "Email address is invalid",
   "Email must be at least 5 characters long": "Email must be at least 5 characters long",
   "First name is required": "First name is required",
   "Firstname must be at least 2 characters long": "Firstname must be at least 2 characters long",
-  "If the email exists, a verification code has been sent": "If the email exists, a verification code has been sent",
+  "If the email exists, A verification code has been sent to your email, Please check your inbox.": "If the email exists, A verification code has been sent to your email, Please check your inbox.",
   "Internal server error": "Internal server error",
   "Invalid email or password": "Invalid email or password",
   "Invalid input": "Invalid input",
@@ -24,5 +25,5 @@
   "Verification code must be 6 digits": "Verification code must be 6 digits",
   "Verification code must be numeric": "Verification code must be numeric",
   "Verification successful. You will recevice your new password within a few minutes by email.": "Verification successful. You will recevice your new password within a few minutes by email.",
-  "Welcome to the ServePortal API!!": "Welcome to the ServePortal API!!"
+  "Welcome to the ServePortal API": "Welcome to the ServePortal API"
 }

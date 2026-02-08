@@ -56,7 +56,9 @@ export const forgotPasswordHandler = async (req: Request, res: Response) => {
     });
 
     return res.status(200).json({
-      message: t("If the email exists, a verification code has been sent"),
+      message: t(
+        "If the email exists, A verification code has been sent to your email, Please check your inbox.",
+      ),
     });
   } catch (error) {
     logger.error("Forgot password request failed", {
