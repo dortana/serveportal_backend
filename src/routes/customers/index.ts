@@ -1,8 +1,13 @@
-import { getCustomers } from "@/controllers/customers";
+import { getMyInformation } from "@/controllers/customers";
+import { UserRole } from "@/generated/prisma/enums";
+import requiresAuth from "@/middlewares/auth";
 import { Router } from "express";
 
 const router = Router();
 
-router.get("/", getCustomers);
+// everything below this line is protected
+router.use(requiresAuth(UserRole.CUSTOMER));
+
+router.get("/me", getMyInformation);
 
 export default router;

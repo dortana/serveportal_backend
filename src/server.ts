@@ -7,9 +7,14 @@ import path from "path";
 import { getTranslator } from "./utils/i18nContext";
 import { i18nContextMiddleware } from "./middlewares/i18nContextMiddleware";
 
+// const messagesDir =
+//   process.env.NODE_ENV === "production"
+//     ? path.join(process.cwd(), "dist/messages")
+//     : path.join(process.cwd(), "src/messages");
+
 i18n.configure({
   locales: ["en-US", "hu-HU"],
-  directory: path.join(__dirname, "./messages"),
+  directory: path.join(process.cwd(), "./messages"),
   defaultLocale: "en-US",
   objectNotation: true,
 });
