@@ -9,10 +9,11 @@ import { createToken } from "@/utils/jwt";
 import { createSessionData, sanitizeUser } from "./verify";
 import { VerifyEmailTemplate } from "@/emails/VerifyEmailTemplate";
 import logger from "@/utils/logger";
+import { generateCode } from "./signup";
 
 export const loginHandler = async (req: Request, res: Response) => {
   const t = getTranslator();
-  const signUpSchema = z.object({
+  const loginSchema = z.object({
     email: z
       .email({
         message: t("Email address is invalid"),
@@ -37,7 +38,7 @@ export const loginHandler = async (req: Request, res: Response) => {
       }),
   });
   try {
-    const result = signUpSchema.safeParse(req.body);
+    const result = loginSchema.safeParse(req.body);
 
     if (!result.success) {
       return res.status(400).json({
@@ -113,7 +114,10 @@ export const loginHandler = async (req: Request, res: Response) => {
     });
 
     return res.status(200).json({
-      message: t("If the email exists, a verification code has been sent"),
+      otpRequired: true,
+      message: t(
+        "If the email exists, A verification code has been sent to your email, Please check your inbox.",
+      ),
     });
   } catch (error) {
     logger.error("Login failed", {
@@ -125,6 +129,3 @@ export const loginHandler = async (req: Request, res: Response) => {
     });
   }
 };
-
-const generateCode = () =>
-  Math.floor(100000 + Math.random() * 900000).toString();
