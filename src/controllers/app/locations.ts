@@ -1,8 +1,10 @@
 import type { Request, Response } from "express";
 import prisma from "@/config/db";
 import logger from "@/utils/logger";
+import { getTranslator } from "@/utils/i18nContext";
 
 export const getLocations = async (req: Request, res: Response) => {
+  const t = getTranslator();
   try {
     const page = parseInt((req.query.page as string) || "1", 10);
     const search = (req.query.search as string) || "";
@@ -12,7 +14,7 @@ export const getLocations = async (req: Request, res: Response) => {
 
     if (page < 1 || limit < 1) {
       return res.status(400).json({
-        error: "Invalid page or limit",
+        error: t("Invalid page or limit"),
       });
     }
 
@@ -69,7 +71,7 @@ export const getLocations = async (req: Request, res: Response) => {
     logger.error("Failed to fetch locations", { error });
 
     return res.status(500).json({
-      error: "Something went wrong",
+      error: t("Internal server error"),
     });
   }
 };
