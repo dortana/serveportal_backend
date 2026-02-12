@@ -8,5 +8,7 @@
   "Password must contain an uppercase letter": "Password must contain an uppercase letter",
   "Password must contain a lowercase letter": "Password must contain a lowercase letter",
   "Password must contain a number": "Password must contain a number",
-  "Password must contain a special character": "Password must contain a special character"
+  "Password must contain a special character": "Password must contain a special character",
+  "Location added successfully.": "Location added successfully.",
+  "Location updated successfully.": "Location updated successfully."
 }
